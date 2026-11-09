@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>Тыва Мессенджер</title>
+<style>
+:root{--bg:#f5f3fb;--panel:#fff;--text:#171326;--muted:#77738a;--line:#ece8f5;--accent:#7028e8;--accent2:#8c4dff;--soft:#f0e8ff;--bubble:#eee9f8;--shadow:0 14px 40px #32126b12}
+[data-theme="dark"]{--bg:#100d18;--panel:#191421;--text:#f7f3ff;--muted:#aaa1ba;--line:#30283d;--accent:#9b5cff;--accent2:#7028e8;--soft:#2b1c42;--bubble:#292235;--shadow:0 14px 40px #0005}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.4 Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+button,input{font:inherit}button{cursor:pointer;border:0}
+.app{height:100dvh;max-width:1500px;margin:auto;padding:18px;display:grid;grid-template-columns:250px 340px 1fr;gap:14px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);min-height:0;overflow:hidden}
+.sidebar{padding:22px 16px;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:12px;padding:3px 8px 26px}
+.logo{width:44px;height:44px;display:grid;place-items:center;background:var(--soft);border-radius:14px}
+.logo svg{width:30px;height:30px;fill:none;stroke:var(--accent);stroke-width:4;stroke-linejoin:round}
+.brand b{font-size:17px}.brand small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.nav-label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:1.4px;padding:10px 12px}
+.nav button{width:100%;padding:12px;border-radius:13px;background:transparent;color:var(--text);text-align:left;display:flex;gap:12px;align-items:center;margin:3px 0}
+.nav button.active,.nav button:hover{background:var(--soft);color:var(--accent)}
+.nav .ico{width:22px;text-align:center;font-size:18px}
+.side-bottom{margin-top:auto;border-top:1px solid var(--line);padding-top:14px}
+.theme-btn{width:100%;padding:12px;border-radius:13px;background:var(--bg);color:var(--text);display:flex;justify-content:space-between}
+.chats{display:flex;flex-direction:column}
+.top{padding:22px 20px 14px;border-bottom:1px solid var(--line)}
+.topline{display:flex;align-items:center;justify-content:space-between}
+h1{font-size:22px;margin:0}.sub{color:var(--muted);font-size:12px;margin-top:4px}
+.search{margin-top:16px;background:var(--bg);border:1px solid var(--line);border-radius:13px;padding:11px 13px;width:100%;outline:none;color:var(--text)}
+.search:focus{border-color:var(--accent)}
+.chat-list{overflow:auto;padding:8px}
+.chat{width:100%;display:flex;align-items:center;gap:12px;padding:12px;border-radius:15px;background:transparent;color:var(--text);text-align:left}
+.chat:hover,.chat.selected{background:var(--soft)}
+.avatar{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#8b4cff,#4e20b5);color:white;font-weight:700;flex:none}
+.avatar.alt{background:linear-gradient(135deg,#12a7ca,#3165cf)}
+.chat-info{min-width:0;flex:1}.chat-name{font-weight:650}.preview{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}
+.time{font-size:10px;color:var(--muted);align-self:flex-start}
+.conversation{display:flex;flex-direction:column;min-width:0}
+.chat-head{padding:17px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
+.chat-head .meta{flex:1}.chat-head .meta b{display:block}.online{font-size:12px;color:#20a66a}
+.head-actions{display:flex;gap:8px}.head-actions button{width:38px;height:38px;border-radius:12px;background:var(--bg);color:var(--accent)}
+.messages{flex:1;overflow:auto;padding:28px;display:flex;flex-direction:column;gap:12px;background:radial-gradient(ellipse at 80% 90%,var(--soft),transparent 45%)}
+.day{text-align:center;color:var(--muted);font-size:11px;margin:4px 0 10px}
+.msg{max-width:min(72%,480px);padding:12px 15px;border-radius:17px;background:var(--bubble);align-self:flex-start}
+.msg.mine{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;align-self:flex-end;border-bottom-right-radius:5px}
+.msg small{display:block;text-align:right;opacity:.65;font-size:10px;margin-top:5px}
+.composer{padding:15px 18px;border-top:1px solid var(--line);display:flex;gap:10px;align-items:center}
+.composer input{flex:1;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:14px;padding:13px;color:var(--text);outline:none}
+.send{background:var(--accent);color:white;border-radius:14px;padding:13px 18px;font-weight:650}
+.mobile-menu{display:none}
+@media(max-width:900px){.app{grid-template-columns:70px 300px 1fr;padding:8px;gap:8px}.sidebar{padding:16px 8px}.brand{justify-content:center;padding:4px 0 22px}.brand-text,.nav-label,.nav button span:not(.ico),.theme-text{display:none}.nav button{justify-content:center;padding:13px 5px}.theme-btn{justify-content:center}}
+@media(max-width:650px){.app{display:block;height:100dvh;padding:0}.sidebar{display:none}.chats{height:100%;border:0;border-radius:0}.conversation{display:none}.app.show-chat .chats{display:none}.app.show-chat .conversation{display:flex;height:100dvh;border:0;border-radius:0}.mobile-menu{display:inline-grid;place-items:center;width:36px;height:36px;background:var(--soft);color:var(--accent);border-radius:11px}.chat-head{padding:12px}.messages{padding:18px}.composer{padding:10px}.msg{max-width:85%}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+<aside class="panel sidebar">
+  <div class="brand"><div class="logo"><svg viewBox="0 0 40 40"><path d="M5 5h12v12H5zM23 5h12v12H23zM5 23h12v12H5zM23 23h12v12H23z" transform="rotate(45 20 20)"/></svg></div><div class="brand-text"><b>Тыва Мессенджер</b><small>Общайся. Будь ближе.</small></div></div>
+  <div class="nav-label">Меню</div>
+  <nav class="nav">
+    <button class="active"><span class="ico">▣</span><span>Чаты</span></button>
+    <button><span class="ico">♙</span><span>Люди</span></button>
+    <button><span class="ico">♧</span><span>Сообщества</span></button>
+    <button><span class="ico">☎</span><span>Звонки</span></button>
+    <button><span class="ico">☆</span><span>Избранное</span></button>
+    <button><span class="ico">⚙</span><span>Настройки</span></button>
+  </nav>
+  <div class="side-bottom"><button class="theme-btn" id="theme"><span>◐ <span class="theme-text">Тёмная тема</span></span><b>↔</b></button></div>
+</aside>
+<section class="panel chats">
+  <header class="top"><div class="topline"><div><h1>Чаты</h1><div class="sub">Твои разговоры в одном месте</div></div><button class="mobile-menu" id="mobileBack" aria-label="Назад">☰</button></div><input class="search" id="search" placeholder="Поиск по чатам"></header>
+  <div class="chat-list" id="chatList">
+    <button class="chat selected" data-name="Аян Хертек" data-avatar="АХ"><div class="avatar">АХ</div><div class="chat-info"><div class="chat-name">Аян Хертек</div><div class="preview">Хорошо, давай завтра 👍</div></div><span class="time">19:45</span></button>
+    <button class="chat" data-name="Группа Тыва" data-avatar="Т"><div class="avatar alt">Т</div><div class="chat-info"><div class="chat-name">Группа Тыва</div><div class="preview">📷 Фото</div></div><span class="time">18:30</span></button>
+    <button class="chat" data-name="Долмаа Сат" data-avatar="ДС"><div class="avatar">ДС</div><div class="chat-info"><div class="chat-name">Долмаа Сат</div><div class="preview">Спасибо! 🙏</div></div><span class="time">16:10</span></button>
+    <button class="chat" data-name="Новости Тывы" data-avatar="Н"><div class="avatar alt">Н</div><div class="chat-info"><div class="chat-name">Новости Тывы</div><div class="preview">В республике ожидается...</div></div><span class="time">14:25</span></button>
+    <button class="chat" data-name="Саяна Монгуш" data-avatar="СМ"><div class="avatar">СМ</div><div class="chat-info"><div class="chat-name">Саяна Монгуш</div><div class="preview">Отлично!</div></div><span class="time">12:50</span></button>
+  </div>
+</section>
+<main class="panel conversation">
+  <header class="chat-head"><button class="mobile-menu" id="back">‹</button><div class="avatar">АХ</div><div class="meta"><b id="person">Аян Хертек</b><span class="online">в сети</span></div><div class="head-actions"><button title="Звонок">☎</button><button title="Информация">⋮</button></div></header>
+  <div class="messages" id="messages"><div class="day">Сегодня</div><div class="msg">Привет! Как дела?<small>19:40</small></div><div class="msg mine">Привет! Отлично 👍<small>19:42 ✓✓</small></div><div class="msg mine">Давай встретимся в центре?<small>19:43 ✓✓</small></div><div class="msg">Давай, в 20:00.<small>19:44</small></div></div>
+  <form class="composer" id="form"><input id="message" placeholder="Написать сообщение..." autocomplete="off"><button class="send">Отправить</button></form>
+</main>
+</div>
+<script>
+const app=document.getElementById('app'), messages=document.getElementById('messages');
+document.getElementById('theme').onclick=()=>{document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'':'dark';};
+document.querySelectorAll('.chat').forEach(c=>c.onclick=()=>{document.querySelectorAll('.chat').forEach(x=>x.classList.remove('selected'));c.classList.add('selected');document.getElementById('person').textContent=c.dataset.name;app.classList.add('show-chat');});
+document.getElementById('back').onclick=()=>app.classList.remove('show-chat');
+document.getElementById('mobileBack').onclick=()=>app.classList.remove('show-chat');
+document.getElementById('search').oninput=e=>{let q=e.target.value.toLowerCase();document.querySelectorAll('.chat').forEach(c=>c.style.display=c.dataset.name.toLowerCase().includes(q)?'flex':'none');};
+document.getElementById('form').onsubmit=e=>{e.preventDefault();let input=document.getElementById('message'),v=input.value.trim();if(!v)return;let bubble=document.createElement('div');bubble.className='msg mine';bubble.textContent=v;let time=document.createElement('small');time.textContent='сейчас ✓';bubble.append(time);messages.append(bubble);messages.scrollTop=messages.scrollHeight;input.value='';};
+</script>
+</body></html>
